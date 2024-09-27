@@ -33,16 +33,16 @@ aws s3 cp $DEPLOYMENT_PACKAGE_NAME $CROSS_ACCOUNT_S3_BUCKET_PATH/$DEPLOYMENT_PAC
 aws sts get-caller-identity
 echo "Codedeploy deployment started"
 aws deploy create-deployment \
-  --application-name test-cross-teest-680-application \
+  --application-name test-cicdl3suawsbodhl63-application \
   --deployment-config-name CodeDeployDefault.OneAtATime \
-  --deployment-group-name test-cross-teest-680-deploygroup \
+  --deployment-group-name test-cicdl3suawsbodhl63-deploygroup \
   --description "Deployment Description" \
   --s3-location bucket=$CROSS_ACCOUNT_S3_BUCKET,bundleType=zip,key=$DEPLOYMENT_PACKAGE_NAME \
   --region us-east-1
 echo "Waiting for deployment to complete..."
 deploymentId=$(aws deploy list-deployments \
-  --application-name test-cross-teest-680-application \
-  --deployment-group-name test-cross-teest-680-deploygroup \
+  --application-name test-cicdl3suawsbodhl63-application \
+  --deployment-group-name test-cicdl3suawsbodhl63-deploygroup \
   --region us-east-1 \
   --query 'deployments[0]' --output text)
 aws deploy wait deployment-successful --deployment-id $deploymentId --region us-east-1
