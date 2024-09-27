@@ -23,6 +23,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
           'cp -r CDK Ohana-Springboot/',
           'mv ./Ohana-Springboot/CDK ./Ohana-Springboot/build_artifacts',
           'cd CDK',
+          'ls',
           'npm ci', 'npm run build', 'npx cdk synth',
           'cp -r cdk.out/* ../Ohana-Springboot/build_artifacts/',
           'cd ..',
@@ -34,6 +35,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
           'ls -al',
           ],
         buildEnvironment: {
+          // buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
           buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
         },
         primaryOutputDirectory: './Ohana-Springboot/build_artifacts',
@@ -74,7 +76,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
                 './test2.sh',
       ],
       buildEnvironment: {
-        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
       },
       env: {
         STAGE: 'lab',
