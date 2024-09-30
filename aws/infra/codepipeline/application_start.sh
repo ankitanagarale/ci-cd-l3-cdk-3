@@ -1,5 +1,5 @@
 #!/bin/bash
-export TOMCAT_HOME="/opt/apache-tomcat-9.0.93"
+export TOMCAT_HOME="/opt/apache-tomcat-9.0.95"
 echo $TOMCAT_HOME
 sudo $TOMCAT_HOME/bin/shutdown.sh
 sudo rm -rf $TOMCAT_HOME/webapps/*
