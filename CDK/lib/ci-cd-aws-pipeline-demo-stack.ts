@@ -72,8 +72,8 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       input: pipeline.synth,
       primaryOutputDirectory: '',
       commands: [ 'ls',
-                'chmod +x test2.sh',
-                './test2.sh',
+                'chmod +x deploy.sh',
+                './deploy.sh',
       ],
       buildEnvironment: {
         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
