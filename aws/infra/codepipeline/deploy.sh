@@ -14,7 +14,7 @@ echo "Downloading finished"
 echo "Extracting and assuming Deployer role for cross account"
 param_name="/matson-hello-world/$STAGE/deploy/role"
 # DEPLOY_ROLE=$(aws ssm get-parameter --name $param_name --with-decryption | jq -r ".Parameter.Value")
-DEPLOY_ROLE=arn:aws:iam::954503069243:role/cdk-hnb659fds-deploy-role-954503069243-ap-south-1
+DEPLOY_ROLE=arn:aws:iam::954503069243:role/cdk-hnb659fds-deploy-role-954503069243-us-east-1
 role=$(aws sts assume-role --role-arn $DEPLOY_ROLE --role-session-name api-deployer-session --duration-seconds 1800)
 KEY=$(echo $role | jq -r ".Credentials.AccessKeyId")
 SECRET=$(echo $role | jq -r ".Credentials.SecretAccessKey")
@@ -22,7 +22,7 @@ TOKEN=$(echo $role | jq -r ".Credentials.SessionToken")
 export AWS_ACCESS_KEY_ID=$KEY
 export AWS_SESSION_TOKEN=$TOKEN
 export AWS_SECRET_ACCESS_KEY=$SECRET
-export AWS_DEFAULT_REGION=ap-south-1
+export AWS_DEFAULT_REGION=us-east-1
 aws s3 ls
 echo "Zipping files for codedeploy"
 # DEPLOYMENT_PACKAGE_NAME="deployment-package-$(date +"%Y%m%d%H%M%S").zip"
