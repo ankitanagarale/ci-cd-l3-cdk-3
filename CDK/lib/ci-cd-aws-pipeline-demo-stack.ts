@@ -30,8 +30,8 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
           'cp -r aws/infra/codepipeline/* Ohana-Springboot/',
           'cd Ohana-Springboot',
           'ls',
-          'chmod +x test.sh',
-          './test.sh',
+          'chmod +x build.sh',
+          './build.sh',
           'ls -al',
           ],
         buildEnvironment: {
