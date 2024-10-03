@@ -43,7 +43,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       selfMutation: false
     });
 
-    const testingStage = pipeline.addStage(new MyPipelineAppStage(this, "test", {
+    const testingStage = pipeline.addStage(new MyPipelineAppStage(this, "lab", {
       env: { account: "954503069243", region: "us-east-1" }
     }));
     // Create an IAM role for the CodeBuildStep
