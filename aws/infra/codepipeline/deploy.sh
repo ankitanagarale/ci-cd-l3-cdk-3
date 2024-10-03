@@ -30,4 +30,9 @@ sed -i "s|{{WAR_FILE_NAME}}|cas-scheduler.war|g" appspec.yml
 # zip -r $DEPLOYMENT_PACKAGE_NAME appspec.yml application_start.sh cas-scheduler.war
 echo "Copying zipped files to cross-account S3 bucket which will be utilized for codedeploy"
 aws s3 cp cas-scheduler.war $CROSS_ACCOUNT_S3_BUCKET_PATH/ROOT.war
-aws ssm send-command --document-name "AWS-RunShellScript" --targets \'[{"Key":"InstanceIds","Values":["i-04f30b7623100c3b2"]}]\' --parameters \'commands=["sudo /opt/apache-tomcat-9.0.95/bin/shutdown.sh","sudo rm -rf /opt/apache-tomcat-9.0.95/webapps/*", "aws s3 cp s3://test-cicdl3suawsbodhl63-lab/ROOT.war /opt/apache-tomcat-9.0.95/webapps/", "sudo /opt/apache-tomcat-9.0.95/bin/startup.sh"]\' --region us-east-1 
+# aws ssm send-command --document-name "AWS-RunShellScript" --targets \'[{"Key":"InstanceIds","Values":["i-04f30b7623100c3b2"]}]\' --parameters \'commands=["sudo /opt/apache-tomcat-9.0.95/bin/shutdown.sh","sudo rm -rf /opt/apache-tomcat-9.0.95/webapps/*", "aws s3 cp s3://test-cicdl3suawsbodhl63-lab/ROOT.war /opt/apache-tomcat-9.0.95/webapps/", "sudo /opt/apache-tomcat-9.0.95/bin/startup.sh"]\' --region us-east-1 
+aws ssm send-command \
+  --document-name "AWS-RunShellScript" \
+  --targets '[{"Key":"InstanceIds","Values":["i-04f30b7623100c3b2"]}]' \
+  --parameters '{"commands":["sudo /opt/apache-tomcat-9.0.95/bin/shutdown.sh","sudo rm -rf /opt/apache-tomcat-9.0.95/webapps/*", "aws s3 cp s3://test-cicdl3suawsbodhl63-lab/ROOT.war /opt/apache-tomcat-9.0.95/webapps/", "sudo /opt/apache-tomcat-9.0.95/bin/startup.sh"]}' \
+  --region us-east-1
