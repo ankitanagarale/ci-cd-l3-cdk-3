@@ -6,6 +6,6 @@ export class MyPipelineAppStage extends cdk.Stage {
     
     constructor(scope: Construct, stageName: string, props?: cdk.StageProps) {
       super(scope, stageName, props);
-      new MyInfraStack(this, 'cicdl3suawsbodhl63', stageName);      
+      new MyInfraStack(this, 'deploylab', stageName);      
     }
 }
