@@ -89,26 +89,26 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
     });
 
-     const ppRole = new iam.Role(this, 'ppRole-cicd', {
-      assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
-      inlinePolicies: {
-        AssumeRolePolicy: new iam.PolicyDocument({
-          statements: [
-            new iam.PolicyStatement({
-              actions: ['sts:AssumeRole'],
-              resources: [
-                'arn:aws:iam::891377353125:role/cdk-hnb659fds-deploy-role-891377353125-us-east-1',
-                'arn:aws:iam::891377353125:role/cdk-hnb659fds-file-publishing-role-891377353125-us-east-1'
-              ],
-            }),
-            // new iam.PolicyStatement({
-            //   actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
-            //   resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
-            // }),
-          ],
-        }),
-      },
-    });
+    //  const prodRole = new iam.Role(this, 'ppRole-cicd', {
+    //   assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
+    //   inlinePolicies: {
+    //     AssumeRolePolicy: new iam.PolicyDocument({
+    //       statements: [
+    //         new iam.PolicyStatement({
+    //           actions: ['sts:AssumeRole'],
+    //           resources: [
+    //             'arn:aws:iam::891377353125:role/cdk-hnb659fds-deploy-role-891377353125-us-east-1',
+    //             'arn:aws:iam::891377353125:role/cdk-hnb659fds-file-publishing-role-891377353125-us-east-1'
+    //           ],
+    //         }),
+    //         // new iam.PolicyStatement({
+    //         //   actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
+    //         //   resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
+    //         // }),
+    //       ],
+    //     }),
+    //   },
+    // });
 
 
     testingStage.addPost(new CodeBuildStep("Deploy Application", {
