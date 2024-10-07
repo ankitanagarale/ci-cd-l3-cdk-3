@@ -1,11 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { Stack, StackProps, CfnOutput, Stage, StageProps } from 'aws-cdk-lib';
+// import { Stack, StackProps, CfnOutput, Stage, StageProps } from 'aws-cdk-lib';
 import { CodePipeline, CodePipelineSource, ShellStep, CodeBuildStep, ManualApprovalStep  } from 'aws-cdk-lib/pipelines';
 import { config } from './config'; // Assuming this imports configuration values
 import { MyPipelineAppStage } from './stage';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import * as iam from 'aws-cdk-lib/aws-iam';
+
 
 export class CiCdAwsPipelineDemoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -68,7 +69,9 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
     });
 
-     const ppRole = new iam.Role(this, 'ppRole-cicd', {
+
+    // IAM Role for the 'prod' account (891377353125)
+    const ppRole = new iam.Role(this, 'ppRole-cicd', {
       assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
       inlinePolicies: {
         AssumeRolePolicy: new iam.PolicyDocument({
@@ -88,8 +91,8 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
         }),
       },
     });
-
-    //  const prodRole = new iam.Role(this, 'ppRole-cicd', {
+    
+    // const prodRole = new iam.Role(this, 'ProdRole-cicd', {
     //   assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
     //   inlinePolicies: {
     //     AssumeRolePolicy: new iam.PolicyDocument({
@@ -97,20 +100,19 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     //         new iam.PolicyStatement({
     //           actions: ['sts:AssumeRole'],
     //           resources: [
-    //             'arn:aws:iam::891377353125:role/cdk-hnb659fds-deploy-role-891377353125-us-east-1',
-    //             'arn:aws:iam::891377353125:role/cdk-hnb659fds-file-publishing-role-891377353125-us-east-1'
+    //             'arn:aws:iam::954503069243:role/cdk-hnb659fds-deploy-role-954503069243-us-east-1',
+    //             'arn:aws:iam::954503069243:role/cdk-hnb659fds-file-publishing-role-954503069243-us-east-1'
     //           ],
     //         }),
-    //         // new iam.PolicyStatement({
-    //         //   actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
-    //         //   resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
-    //         // }),
+    //         new iam.PolicyStatement({
+    //           actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
+    //           resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
+    //         }),
     //       ],
     //     }),
     //   },
     // });
-
-
+    
     testingStage.addPost(new CodeBuildStep("Deploy Application", {
       input: pipeline.synth,
       primaryOutputDirectory: '',
@@ -133,12 +135,14 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     //   role: testRole // Assign the role to the CodeBuildStep
     //  }));
     // testingStage.addPost(new ManualApprovalStep('Manual approval before production'));
-
+    // testingStage.addPost(new ManualApprovalStep('ManualApprovalBeforeProd'));
+     // SNS-Triggered Manual Approval Step
+    // testingStage.addPost(new ManualApprovalStep('ManualApprovalBeforeProd'));
+     
     const ppStage = pipeline.addStage(new MyPipelineAppStage(this, "pp", {
-      env: { account: "264852106485", region: "us-east-1" }
+      env: { account: "891377353125", region: "us-east-1" }
     }));
-
-    prodStage.addPost(new CodeBuildStep("Deploy to pp", {
+    ppStage.addPost(new CodeBuildStep("Deploy to pp", {
       input: pipeline.synth,
       primaryOutputDirectory: '',
       commands: [ 'ls',
