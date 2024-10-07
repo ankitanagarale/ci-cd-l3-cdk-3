@@ -43,7 +43,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       selfMutation: false
     });
 
-    const testingStage = pipeline.addStage(new MyPipelineAppStage(this, "lab", {
+    const testingStage = pipeline.addStage(new MyPipelineAppStage(this, "dev", {
       env: { account: "954503069243", region: "us-east-1" }
     }));
     // Create an IAM role for the CodeBuildStep
@@ -68,7 +68,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
     });
 
-     const devRole = new iam.Role(this, 'DevRole-cicd', {
+     const ppRole = new iam.Role(this, 'DevRole-cicd', {
       assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
       inlinePolicies: {
         AssumeRolePolicy: new iam.PolicyDocument({
@@ -100,7 +100,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
       },
       env: {
-        STAGE: 'lab',
+        STAGE: 'dev',
         CROSS_ACCOUNT_S3_BUCKET: 'test-cross-teest-680-lab',
         CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://test-cross-teest-680-lab"
       },
@@ -112,7 +112,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     //  }));
     // testingStage.addPost(new ManualApprovalStep('Manual approval before production'));
 
-    const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
+    const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "pp", {
       env: { account: "264852106485", region: "us-east-1" }
     }));
 
@@ -127,11 +127,11 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
       },
       env: {
-        STAGE: 'dev',
+        STAGE: 'pp',
         CROSS_ACCOUNT_S3_BUCKET: 'test-cross-teest-680-dev',
         CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://test-cross-teest-680-dev"
       },
-      role: devRole // Ensure the same role or a role with similar permissions in the dev account
+      role: ppRole // Ensure the same role or a role with similar permissions in the dev account
     }));
   }
 }
