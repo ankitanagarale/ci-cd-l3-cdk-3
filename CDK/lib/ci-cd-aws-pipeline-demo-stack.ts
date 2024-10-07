@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Stack, StackProps, CfnOutput, Stage, StageProps } from 'aws-cdk-lib';
-import { CodePipeline, CodePipelineSource, ShellStep, CodeBuildStep } from 'aws-cdk-lib/pipelines';
+import { CodePipeline, CodePipelineSource, ShellStep, CodeBuildStep, ManualApprovalStep  } from 'aws-cdk-lib/pipelines';
 import { config } from './config'; // Assuming this imports configuration values
 import { MyPipelineAppStage } from './stage';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
@@ -91,8 +91,26 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     //  }));
     // testingStage.addPost(new ManualApprovalStep('Manual approval before production'));
 
-    // const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
-    //   env: { account: "264852106485", region: "us-east-1" }
-    // }));
+    const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
+      env: { account: "264852106485", region: "us-east-1" }
+    }));
+
+    prodStage.addPost(new CodeBuildStep("Deploy to Dev", {
+      input: pipeline.synth,
+      primaryOutputDirectory: '',
+      commands: [ 'ls',
+                'chmod +x deploy.sh',
+                './deploy.sh',
+      ],
+      buildEnvironment: {
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
+      },
+      env: {
+        STAGE: 'dev',
+        CROSS_ACCOUNT_S3_BUCKET: 'test-cross-teest-680-dev',
+        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://test-cross-teest-680-dev"
+      },
+      role: testRole // Ensure the same role or a role with similar permissions in the dev account
+    }));
   }
 }
