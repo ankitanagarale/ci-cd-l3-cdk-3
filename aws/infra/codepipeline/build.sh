@@ -47,7 +47,7 @@ cp target/cas-scheduler-admin-1.0.2.war .
 
 mv cas-scheduler-admin-1.0.2.war cas-scheduler.war
  
-cp -R cas-scheduler.war buildspec-lab.yml appspec.yml application_start.sh deploy.sh deploy-pp.sh build_artifacts
+cp -R cas-scheduler.war buildspec-lab.yml appspec.yml application_start.sh deploy.sh deploy-pp.sh  deploy-prod.sh build_artifacts
  
 echo "Build artifacts prepared:"
 
