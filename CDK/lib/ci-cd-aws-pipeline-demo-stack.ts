@@ -163,7 +163,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     
   
     const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
-      env: { account: "891377353125", region: "us-east-1" }
+      env: { account: "654654515013", region: "us-east-1" }
     }));
     prodStage.addPost(new CodeBuildStep("Deploy to prod", {
       input: pipeline.synth,
