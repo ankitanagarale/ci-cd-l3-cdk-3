@@ -70,7 +70,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     });
 
 
-    // IAM Role for the 'prod' account (891377353125)
+    // IAM Role for the 'pp' 
     const ppRole = new iam.Role(this, 'ppRole-cicd', {
       assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
       inlinePolicies: {
@@ -92,41 +92,41 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
     });
     
-    // const prodRole = new iam.Role(this, 'ProdRole-cicd', {
-    //   assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
-    //   inlinePolicies: {
-    //     AssumeRolePolicy: new iam.PolicyDocument({
-    //       statements: [
-    //         new iam.PolicyStatement({
-    //           actions: ['sts:AssumeRole'],
-    //           resources: [
-    //             'arn:aws:iam::954503069243:role/cdk-hnb659fds-deploy-role-954503069243-us-east-1',
-    //             'arn:aws:iam::954503069243:role/cdk-hnb659fds-file-publishing-role-954503069243-us-east-1'
-    //           ],
-    //         }),
-    //         new iam.PolicyStatement({
-    //           actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
-    //           resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
-    //         }),
-    //       ],
-    //     }),
-    //   },
-    // });
+    const prodRole = new iam.Role(this, 'ProdRole-cicd', {
+      assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
+      inlinePolicies: {
+        AssumeRolePolicy: new iam.PolicyDocument({
+          statements: [
+            new iam.PolicyStatement({
+              actions: ['sts:AssumeRole'],
+              resources: [
+                'arn:aws:iam::654654515013:role/cdk-hnb659fds-deploy-role-654654515013-us-east-1',
+                'arn:aws:iam::654654515013:role/cdk-hnb659fds-file-publishing-role-654654515013-us-east-1'
+              ],
+            }),
+            new iam.PolicyStatement({
+              actions: ['ssm:GetParameter', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
+              resources: ['arn:aws:ssm:us-east-1:264852106485:parameter/matson-hello-world/*'],
+            }),
+          ],
+        }),
+      },
+    });
     
     testingStage.addPost(new CodeBuildStep("Deploy Application", {
       input: pipeline.synth,
       primaryOutputDirectory: '',
       commands: [ 'ls',
-                'chmod +x deploy.sh',
-                './deploy.sh',
+                'chmod +x deploy-dev.sh',
+                './deploy-dev.sh',
       ],
       buildEnvironment: {
         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
       },
       env: {
         STAGE: 'dev',
-        CROSS_ACCOUNT_S3_BUCKET: 'test-cross-teest-680-lab',
-        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://test-cross-teest-680-lab"
+        CROSS_ACCOUNT_S3_BUCKET: 'dev-deploydevstage-lab',
+        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://dev-deploydevstage-lab"
       },
       role: testRole 
     }));
@@ -154,10 +154,35 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
       env: {
         STAGE: 'pp',
-        CROSS_ACCOUNT_S3_BUCKET: 'test-cross-teest-680-dev',
-        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://test-cross-teest-680-dev"
+        CROSS_ACCOUNT_S3_BUCKET: 'pp-deploydevstage-lab',
+        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://pp-deploydevstage-lab"
       },
       role: ppRole // Ensure the same role or a role with similar permissions in the dev account
     }));
+
+    
+  
+    const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
+      env: { account: "891377353125", region: "us-east-1" }
+    }));
+    prodStage.addPost(new CodeBuildStep("Deploy to prod", {
+      input: pipeline.synth,
+      primaryOutputDirectory: '',
+      commands: [ 'ls',
+                'chmod +x deploy-prod.sh',
+                './deploy-prod.sh',
+      ],
+      buildEnvironment: {
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_5,
+      },
+      env: {
+        STAGE: 'prod',
+        CROSS_ACCOUNT_S3_BUCKET: 'prod-deploydevstage-lab',
+        CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://prod-deploydevstage-lab"
+      },
+      role: prodRole // Ensure the same role or a role with similar permissions in the dev account
+    }));
+
+
   }
 }
