@@ -23,7 +23,7 @@ export AWS_ACCESS_KEY_ID=$KEY
 export AWS_SESSION_TOKEN=$TOKEN
 export AWS_SECRET_ACCESS_KEY=$SECRET
 export AWS_DEFAULT_REGION=us-east-1
-aws s3 ls
+# aws s3 ls
 echo "Zipping files for codedeploy"
 # DEPLOYMENT_PACKAGE_NAME="deployment-package-$(date +"%Y%m%d%H%M%S").zip"
 sed -i "s|{{WAR_FILE_NAME}}|cas-scheduler.war|g" appspec.yml
