@@ -44,11 +44,11 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       selfMutation: false
     });
 
-    const testingStage = pipeline.addStage(new MyPipelineAppStage(this, "dev", {
+    const devStage = pipeline.addStage(new MyPipelineAppStage(this, "dev", {
       env: { account: "954503069243", region: "us-east-1" }
     }));
     // Create an IAM role for the CodeBuildStep
-    const testRole = new iam.Role(this, 'TestRole-cicd', {
+    const devRole = new iam.Role(this, 'devRole-cicd', {
       assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
       inlinePolicies: {
         AssumeRolePolicy: new iam.PolicyDocument({
@@ -113,7 +113,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       },
     });
     
-    testingStage.addPost(new CodeBuildStep("Deploy Application", {
+    devStage.addPost(new CodeBuildStep("Deploy Application", {
       input: pipeline.synth,
       primaryOutputDirectory: '',
       commands: [ 'ls',
@@ -128,7 +128,7 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
         CROSS_ACCOUNT_S3_BUCKET: 'dev-deploydevstage-lab',
         CROSS_ACCOUNT_S3_BUCKET_PATH: "s3://dev-deploydevstage-lab"
       },
-      role: testRole 
+      role: devRole 
     }));
 
     // testingStage.addPre(new CodeBuildStep("Run Unit Tests", { commands: ['npm install'],
@@ -165,6 +165,8 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
     const prodStage = pipeline.addStage(new MyPipelineAppStage(this, "prod", {
       env: { account: "654654515013", region: "us-east-1" }
     }));
+    prodStage.addPre(new ManualApprovalStep('ManualApprovalBeforeProd'));
+
     prodStage.addPost(new CodeBuildStep("Deploy to prod", {
       input: pipeline.synth,
       primaryOutputDirectory: '',
@@ -183,6 +185,6 @@ export class CiCdAwsPipelineDemoStack extends cdk.Stack {
       role: prodRole // Ensure the same role or a role with similar permissions in the dev account
     }));
 
-
+    
   }
 }
